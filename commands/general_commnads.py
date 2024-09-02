@@ -4,10 +4,8 @@ from telegram.ext import ContextTypes
 import requests
 from dotenv import load_dotenv
 import os
-import json
 import asyncio
 from datetime import timedelta, datetime
-import uuid
 
 
 load_dotenv()
