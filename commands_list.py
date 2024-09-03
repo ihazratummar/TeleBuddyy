@@ -3,7 +3,7 @@ from commands.general_commnads import General
 from functools import partial
 
 
-def get_handlers(database, commands):
+def get_handlers(database):
     general = General(db=database)
     utils = Utils()
     commands = [
