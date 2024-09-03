@@ -10,7 +10,7 @@ from pymongo import MongoClient
 from keep_alive import keep_alive
 
 
-keep_alive()
+
 load_dotenv()
 mongo_username = os.getenv("MONGO_USERNAME")
 mongo_password = os.getenv("MONGO_PASSWORD")
@@ -38,10 +38,13 @@ class Bot:
     def start(self):
         print("Starting Bot....")
         self.add_handler()
-        print("Polling...")
-        self.app.run_polling()
+        print("Setting...")
+        webhook = f"https://telebuddyy.onrender.com/"
+        self.app.bot.set_webhook(webhook)
+        print(webhook)
 
 if __name__ == "__main__":
     bot = Bot(database=database)
     bot.start()
+    keep_alive()
 
