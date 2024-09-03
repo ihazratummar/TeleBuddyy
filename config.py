@@ -39,7 +39,7 @@ class Bot:
         print("Starting Bot....")
         self.add_handler()
         print("Setting...")
-        webhook = f"https://telebuddyy.onrender.com/"
+        webhook = f"https://telebuddyy.onrender.com/webhook"
         self.app.bot.set_webhook(webhook)
         print(webhook)
 
