@@ -1,10 +1,15 @@
 from flask import Flask, request
 from threading import Thread
 from telegram import Update
-from config import Bot
+
+
+def bot(bot):
+    return bot
+
+bot = bot() 
+
 
 app = Flask(__name__)
-bot = Bot()
 @app.route('/')
 def index():
     return "Alive"

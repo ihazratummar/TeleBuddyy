@@ -7,7 +7,7 @@ from commands_list import get_handlers
 from error.error_handle import error_handle
 from telegram.ext import CallbackQueryHandler
 from pymongo import MongoClient
-from keep_alive import keep_alive
+from keep_alive import keep_alive, keep_bot
 
 
 
@@ -47,4 +47,5 @@ if __name__ == "__main__":
     bot = Bot(database=database)
     bot.start()
     keep_alive()
+    keep_bot(bot)
 
