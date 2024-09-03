@@ -1,6 +1,5 @@
 from flask import Flask, request
 from threading import Thread
-from telegram import Update
 
 
 
