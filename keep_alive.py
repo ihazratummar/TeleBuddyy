@@ -6,7 +6,7 @@ from telegram import Update
 def bot(bot):
     return bot
 
-bot = bot() 
+
 
 
 app = Flask(__name__)
