@@ -7,9 +7,10 @@ from commands_list import get_handlers
 from error.error_handle import error_handle
 from telegram.ext import CallbackQueryHandler
 from pymongo import MongoClient
+from keep_alive import keep_alive
 
 
-
+keep_alive()
 load_dotenv()
 mongo_username = os.getenv("MONGO_USERNAME")
 mongo_password = os.getenv("MONGO_PASSWORD")
