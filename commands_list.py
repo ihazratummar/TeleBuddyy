@@ -20,8 +20,7 @@ def get_handlers(database):
         ("todo_list", partial(general.todo_list)),
         ("complete_todo", partial(general.complete_todo)),
         ("delete_todo", partial(general.delete_todo)),
-        ("define", partial(general.define)),
-        ("help", partial(utils.help))
+        ("define", partial(general.define))
     ]
 
     button_handles = [
