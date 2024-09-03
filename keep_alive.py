@@ -3,7 +3,7 @@ from threading import Thread
 from telegram import Update
 
 
-def bot(bot):
+def keep_bot(bot):
     return bot
 
 
@@ -20,8 +20,8 @@ def run():
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    update = Update.de_json(request.get_json(), bot.app.bot)
-    bot.app.process_update(update)
+    update = Update.de_json(request.get_json(), keep_bot.app.bot)
+    keep_bot.app.process_update(update)
     return 'ok'
 
 
