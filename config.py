@@ -1,13 +1,12 @@
 from telegram import Update
 from telegram.ext import CommandHandler, Application
-from commands.utils import start
 import os 
 from dotenv import load_dotenv
 from commands_list import get_handlers
 from error.error_handle import error_handle
 from telegram.ext import CallbackQueryHandler
 from pymongo import MongoClient
-from keep_alive import keep_alive, keep_bot
+from keep_alive import keep_alive
 
 
 
@@ -31,21 +30,18 @@ class Bot:
         commands , button_handlers = get_handlers(self.database)
         for command , handler in commands:
             self.app.add_handler(CommandHandler(command, handler))
-        
+        print(f"{len(commands)} commands ")
         for button_handler in button_handlers:
             self.app.add_handler(CallbackQueryHandler(button_handler))
         self.app.add_error_handler(error_handle)
     def start(self):
         print("Starting Bot....")
         self.add_handler()
-        print("Setting...")
-        webhook = f"https://telebuddyy.onrender.com/webhook"
-        self.app.bot.set_webhook(webhook)
-        print(webhook)
+        print("Polling...")
+        self.app.run_polling()
 
 if __name__ == "__main__":
     bot = Bot(database=database)
     bot.start()
-    keep_alive()
-    keep_bot(bot)
+    keep_alive()      
 

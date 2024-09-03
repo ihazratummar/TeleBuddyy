@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import os
 import asyncio
 from datetime import timedelta, datetime
+import threading
 
 
 load_dotenv()
@@ -78,7 +79,7 @@ class General:
             print(facts)
             await update.message.reply_text(f"{facts['fact']}")
 
-    async def remind(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async def reminder(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
             args = context.args
             if len(args) < 2:
@@ -91,10 +92,21 @@ class General:
 
             await update.message.reply_text(f"Reminder set for {time_in_minutes} minutes from now.")
 
-            await asyncio.sleep(time_in_minutes * 60)
-            await update.message.reply_text(f"Reminder: {remind_message}")
+            # Start the reminder in a new thread
+            threading.Thread(target=self.send_reminder, args=(update, context, time_in_minutes, remind_message)).start()
         except Exception as e:
             await update.message.reply_text(f"Error: {str(e)}")
+
+    def send_reminder(self, update: Update, context: ContextTypes.DEFAULT_TYPE, time_in_minutes, reminder_message):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        
+        # Run the sleep coroutine and then send the reminder message
+        loop.run_until_complete(asyncio.sleep(time_in_minutes * 60))
+        loop.run_until_complete(update.message.reply_text(f"Reminder: {reminder_message}"))
+
+        # Close the loop after running
+        loop.close()
 
     # Dictionary to store the counts of each option
     click_counts = {}
@@ -306,3 +318,53 @@ class General:
             else:
                 await update.message.reply_text("No task found")
 
+    async def define(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        if context.args:
+            word = ' '.join(context.args)
+            url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
+            
+            try:
+                response = requests.get(url).json()
+
+                if isinstance(response, list) and response:
+                    for word_data in response:
+                        word = word_data.get('word', 'N/A')
+                        
+                        response_message = f"\n**Word**: {word}\n"
+                        
+                        meanings = word_data.get('meanings', [])
+                        for meaning in meanings:
+                            part_of_speech = meaning.get('partOfSpeech', 'N/A')
+                            response_message += f"\n**Part of Speech**: {part_of_speech}\n\n"
+                            definitions = meaning.get('definitions', [])
+                            
+                            for definition in definitions:
+                                response_message += f"Definition: {definition.get('definition', 'N/A')}\n"
+                                example = definition.get('example', None)
+                                if example:
+                                    response_message += f"Example: {example}\n"
+                                response_message += "\n"
+                            
+                            synonyms = meaning.get('synonyms', [])
+                            antonyms = meaning.get('antonyms', [])
+                            
+                            if synonyms:
+                                response_message += f"Synonyms: {', '.join(synonyms)}\n"
+                            if antonyms:
+                                response_message += f"Antonyms: {', '.join(antonyms)}\n"
+
+                        # Print source URLs
+                        source_urls = word_data.get('sourceUrls', [])
+                        if source_urls:
+                            response_message += f"Source: {', '.join(source_urls)}"
+
+                        # Send the response to the user
+                        await update.message.reply_text(response_message, parse_mode='Markdown')
+
+                else:
+                    await update.message.reply_text(f"Sorry, no definition found for '{word}'.")
+            
+            except Exception as e:
+                await update.message.reply_text(f"An error occurred: {str(e)}")
+        else:
+            await update.message.reply_text("Please provide a word to define.")
